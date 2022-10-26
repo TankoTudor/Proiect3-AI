@@ -30,7 +30,7 @@
         {
             this.cirosisDGV = new System.Windows.Forms.DataGridView();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.loadDataTMS = new System.Windows.Forms.ToolStripMenuItem();
+            this.normalizeTMS = new System.Windows.Forms.ToolStripMenuItem();
             this.antrenamentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.cirosisDGV)).BeginInit();
@@ -51,7 +51,7 @@
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadDataTMS,
+            this.normalizeTMS,
             this.antrenamentToolStripMenuItem,
             this.testareToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -60,11 +60,12 @@
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // loadDataTMS
+            // normalizeTMS
             // 
-            this.loadDataTMS.Name = "loadDataTMS";
-            this.loadDataTMS.Size = new System.Drawing.Size(105, 24);
-            this.loadDataTMS.Text = "Normalizare";
+            this.normalizeTMS.Name = "normalizeTMS";
+            this.normalizeTMS.Size = new System.Drawing.Size(105, 24);
+            this.normalizeTMS.Text = "Normalizare";
+            this.normalizeTMS.Click += new System.EventHandler(this.normalizeTMS_Click);
             // 
             // antrenamentToolStripMenuItem
             // 
@@ -101,7 +102,7 @@
 
         private DataGridView cirosisDGV;
         private MenuStrip menuStrip1;
-        private ToolStripMenuItem loadDataTMS;
+        private ToolStripMenuItem normalizeTMS;
         private ToolStripMenuItem antrenamentToolStripMenuItem;
         private ToolStripMenuItem testareToolStripMenuItem;
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using Proiect3_AI.Classes;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,8 +14,6 @@ namespace Proiect3_AI
 {
     public class ReadFile
     {
-        public List<CirozaData> cirozaList = new List<CirozaData>();
-
         public DataTable readCSV;
 
         public ReadFile(string fileName, bool firstRowContainsFieldNames = true)
@@ -25,6 +24,7 @@ namespace Proiect3_AI
         private static DataTable GenerateDataTable(string fileName, bool firstRowContainsFieldNames = true)
         {
             DataTable result = new DataTable();
+            CirozaData cirozaData = new CirozaData();
 
             if (fileName == "")
             {
@@ -46,9 +46,9 @@ namespace Proiect3_AI
                     for (int i = 0; i < fields.Count(); i++)
                     {
                         if (firstRowContainsFieldNames)
+                        {
                             result.Columns.Add(fields[i]);
-                        else
-                            result.Columns.Add("Col" + i);
+                        }
                     }
 
                     // If first line is data then add it
@@ -60,10 +60,7 @@ namespace Proiect3_AI
                 while (!tfp.EndOfData)
                     result.Rows.Add(tfp.ReadFields());
             }
-
             return result;
         }
-
-
     }    
 }
