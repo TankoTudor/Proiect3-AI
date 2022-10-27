@@ -35,21 +35,21 @@
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.neuHL1NUD = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.errorNUD = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
+            this.nrHLNUD = new System.Windows.Forms.NumericUpDown();
+            this.hl2Label = new System.Windows.Forms.Label();
+            this.neuHL2NUD = new System.Windows.Forms.NumericUpDown();
+            this.neuHL3NUD = new System.Windows.Forms.NumericUpDown();
+            this.hl3Label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ratadeinvNud)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.neuHL1NUD)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorNUD)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nrHLNUD)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.neuHL2NUD)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.neuHL3NUD)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -122,18 +122,18 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Numar neuroni HL1:";
             // 
-            // numericUpDown1
+            // neuHL1NUD
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(381, 580);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.neuHL1NUD.Location = new System.Drawing.Point(381, 580);
+            this.neuHL1NUD.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(62, 27);
-            this.numericUpDown1.TabIndex = 6;
-            this.numericUpDown1.Value = new decimal(new int[] {
+            this.neuHL1NUD.Name = "neuHL1NUD";
+            this.neuHL1NUD.Size = new System.Drawing.Size(62, 27);
+            this.neuHL1NUD.TabIndex = 6;
+            this.neuHL1NUD.Value = new decimal(new int[] {
             100,
             0,
             0,
@@ -148,18 +148,18 @@
             this.label3.TabIndex = 7;
             this.label3.Text = "Eroarea:";
             // 
-            // numericUpDown2
+            // errorNUD
             // 
-            this.numericUpDown2.DecimalPlaces = 2;
-            this.numericUpDown2.Increment = new decimal(new int[] {
+            this.errorNUD.DecimalPlaces = 2;
+            this.errorNUD.Increment = new decimal(new int[] {
             1,
             0,
             0,
             65536});
-            this.numericUpDown2.Location = new System.Drawing.Point(81, 640);
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(62, 27);
-            this.numericUpDown2.TabIndex = 8;
+            this.errorNUD.Location = new System.Drawing.Point(81, 640);
+            this.errorNUD.Name = "errorNUD";
+            this.errorNUD.Size = new System.Drawing.Size(62, 27);
+            this.errorNUD.TabIndex = 8;
             // 
             // label4
             // 
@@ -170,84 +170,89 @@
             this.label4.TabIndex = 9;
             this.label4.Text = "Numar HL:";
             // 
-            // numericUpDown3
+            // nrHLNUD
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(97, 600);
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(62, 27);
-            this.numericUpDown3.TabIndex = 10;
-            this.numericUpDown3.Value = new decimal(new int[] {
+            this.nrHLNUD.Location = new System.Drawing.Point(97, 600);
+            this.nrHLNUD.Name = "nrHLNUD";
+            this.nrHLNUD.Size = new System.Drawing.Size(62, 27);
+            this.nrHLNUD.TabIndex = 10;
+            this.nrHLNUD.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
+            this.nrHLNUD.ValueChanged += new System.EventHandler(this.nrHLNUD_ValueChanged);
             // 
-            // label5
+            // hl2Label
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(234, 620);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(141, 20);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Numar neuroni HL2:";
+            this.hl2Label.AutoSize = true;
+            this.hl2Label.Location = new System.Drawing.Point(234, 620);
+            this.hl2Label.Name = "hl2Label";
+            this.hl2Label.Size = new System.Drawing.Size(141, 20);
+            this.hl2Label.TabIndex = 11;
+            this.hl2Label.Text = "Numar neuroni HL2:";
+            this.hl2Label.Visible = false;
             // 
-            // numericUpDown4
+            // neuHL2NUD
             // 
-            this.numericUpDown4.Location = new System.Drawing.Point(381, 620);
-            this.numericUpDown4.Maximum = new decimal(new int[] {
+            this.neuHL2NUD.Location = new System.Drawing.Point(381, 620);
+            this.neuHL2NUD.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDown4.Name = "numericUpDown4";
-            this.numericUpDown4.Size = new System.Drawing.Size(62, 27);
-            this.numericUpDown4.TabIndex = 12;
-            this.numericUpDown4.Value = new decimal(new int[] {
+            this.neuHL2NUD.Name = "neuHL2NUD";
+            this.neuHL2NUD.Size = new System.Drawing.Size(62, 27);
+            this.neuHL2NUD.TabIndex = 12;
+            this.neuHL2NUD.Value = new decimal(new int[] {
             100,
             0,
             0,
             0});
+            this.neuHL2NUD.Visible = false;
             // 
-            // numericUpDown5
+            // neuHL3NUD
             // 
-            this.numericUpDown5.Location = new System.Drawing.Point(381, 663);
-            this.numericUpDown5.Maximum = new decimal(new int[] {
+            this.neuHL3NUD.Location = new System.Drawing.Point(381, 663);
+            this.neuHL3NUD.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDown5.Name = "numericUpDown5";
-            this.numericUpDown5.Size = new System.Drawing.Size(62, 27);
-            this.numericUpDown5.TabIndex = 13;
-            this.numericUpDown5.Value = new decimal(new int[] {
+            this.neuHL3NUD.Name = "neuHL3NUD";
+            this.neuHL3NUD.Size = new System.Drawing.Size(62, 27);
+            this.neuHL3NUD.TabIndex = 13;
+            this.neuHL3NUD.Value = new decimal(new int[] {
             100,
             0,
             0,
             0});
+            this.neuHL3NUD.Visible = false;
             // 
-            // label6
+            // hl3Label
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(234, 663);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(141, 20);
-            this.label6.TabIndex = 14;
-            this.label6.Text = "Numar neuroni HL3:";
+            this.hl3Label.AutoSize = true;
+            this.hl3Label.Location = new System.Drawing.Point(234, 663);
+            this.hl3Label.Name = "hl3Label";
+            this.hl3Label.Size = new System.Drawing.Size(141, 20);
+            this.hl3Label.TabIndex = 14;
+            this.hl3Label.Text = "Numar neuroni HL3:";
+            this.hl3Label.Visible = false;
             // 
             // Antrenament
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1261, 705);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.numericUpDown5);
-            this.Controls.Add(this.numericUpDown4);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.numericUpDown3);
+            this.Controls.Add(this.hl3Label);
+            this.Controls.Add(this.neuHL3NUD);
+            this.Controls.Add(this.neuHL2NUD);
+            this.Controls.Add(this.hl2Label);
+            this.Controls.Add(this.nrHLNUD);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.numericUpDown2);
+            this.Controls.Add(this.errorNUD);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.neuHL1NUD);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnStart);
@@ -257,11 +262,11 @@
             this.Name = "Antrenament";
             this.Text = "Antrenament";
             ((System.ComponentModel.ISupportInitialize)(this.ratadeinvNud)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.neuHL1NUD)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorNUD)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nrHLNUD)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.neuHL2NUD)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.neuHL3NUD)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -275,14 +280,14 @@
         private Button btnStart;
         private Button btnStop;
         private Label label2;
-        private NumericUpDown numericUpDown1;
+        private NumericUpDown neuHL1NUD;
         private Label label3;
-        private NumericUpDown numericUpDown2;
+        private NumericUpDown errorNUD;
         private Label label4;
-        private NumericUpDown numericUpDown3;
-        private Label label5;
-        private NumericUpDown numericUpDown4;
-        private NumericUpDown numericUpDown5;
-        private Label label6;
+        private NumericUpDown nrHLNUD;
+        private Label hl2Label;
+        private NumericUpDown neuHL2NUD;
+        private NumericUpDown neuHL3NUD;
+        private Label hl3Label;
     }
 }

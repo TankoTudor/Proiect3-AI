@@ -1,4 +1,5 @@
 using Proiect3_AI.Classes;
+using System;
 using System.Data;
 using System.Windows.Forms;
 
@@ -175,6 +176,7 @@ namespace Proiect3_AI
                     normalizedCirozaData.Stage = 0.9;
                 }
                 StorageData.normalizedCirozaList.Add(normalizedCirozaData);
+                SplitData(StorageData.normalizedCirozaList);
             } 
         }
 
@@ -187,6 +189,24 @@ namespace Proiect3_AI
         {
             normalizaredate();
             cirosisDGV.DataSource = StorageData.normalizedCirozaList;
+        }
+
+        private void SplitData(List<NormalizedCirozaData> data)
+        {
+            Random rnd = new Random();
+            foreach (NormalizedCirozaData item in data)
+            {
+                int number = rnd.Next(1, 100);
+
+                if (number <= 70)
+                {
+                    StorageData.antrenamentList.Add(item);
+                }
+                else
+                {
+                    StorageData.testList.Add(item);
+                }
+            }
         }
     }
 }

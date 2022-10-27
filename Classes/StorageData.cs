@@ -10,6 +10,8 @@ namespace Proiect3_AI.Classes
     {
         public static List<CirozaData> cirozaList = new List<CirozaData>();
         public static List<NormalizedCirozaData> normalizedCirozaList = new List<NormalizedCirozaData>();
+        public static List<NormalizedCirozaData> antrenamentList = new List<NormalizedCirozaData>();
+        public static List<NormalizedCirozaData> testList = new List<NormalizedCirozaData>();
         public static int min_nr_zile,max_nr_zile;
         public static int min_ani,max_ani;
         public static double min_bilirubin,max_bilirubin;

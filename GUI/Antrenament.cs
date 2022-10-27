@@ -16,5 +16,30 @@ namespace Proiect3_AI
         {
             InitializeComponent();
         }
+
+        private void nrHLNUD_ValueChanged(object sender, EventArgs e)
+        {
+            if(nrHLNUD.Value == 1)
+            {
+                hl2Label.Visible = false;
+                neuHL2NUD.Visible = false;
+                hl3Label.Visible = false;
+                neuHL3NUD.Visible = false;
+            }
+            if(nrHLNUD.Value == 2)
+            {
+                hl2Label.Visible = true;
+                neuHL2NUD.Visible = true;
+                hl3Label.Visible = false;
+                neuHL3NUD.Visible = false;
+            }
+            if(nrHLNUD.Value == 3)
+            {
+                hl2Label.Visible = true;
+                neuHL2NUD.Visible = true;
+                hl3Label.Visible = true;
+                neuHL3NUD.Visible = true;
+            }
+        }
     }
 }

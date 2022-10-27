@@ -28,4 +28,5 @@ namespace Proiect3_AI.Classes
         public double Prothrombin { get; set; }
         public double Stage { get; set; }
     }
+
 }
