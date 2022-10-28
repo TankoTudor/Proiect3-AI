@@ -57,7 +57,7 @@ namespace Proiect3_AI
                 //status
                 if (obiect.Status.Contains("D"))
                 {
-                    normalizedCirozaData.Status = 0.1;
+                    normalizedCirozaData.Status = 0.001;
                 }
                 else if(obiect.Status.Contains("C"))
                 {
@@ -65,17 +65,17 @@ namespace Proiect3_AI
                 }
                 else if(obiect.Status.Contains("CL"))
                 {
-                    normalizedCirozaData.Status = 0.9;
+                    normalizedCirozaData.Status = 0.999;
                 }
 
                 //drug
                 if (obiect.Drug.Contains("D-penicillamine"))
                 {
-                    normalizedCirozaData.Drug = 0.1;
+                    normalizedCirozaData.Drug = 0.001;
                 }
                 else if (obiect.Drug.Contains("Placebo"))
                 {
-                    normalizedCirozaData.Drug = 0.9;
+                    normalizedCirozaData.Drug = 0.999;
                 }
 
                 //age
@@ -84,51 +84,51 @@ namespace Proiect3_AI
                 //sex
                 if (obiect.Sex.Contains("M"))
                 {
-                    normalizedCirozaData.Sex = 0.1;
+                    normalizedCirozaData.Sex = 0.001;
                 }
                 else if (obiect.Sex.Contains("F"))
                 {
-                    normalizedCirozaData.Sex = 0.9;
+                    normalizedCirozaData.Sex = 0.999;
                 }
 
                 //ascites
                 if (obiect.Ascites.Contains("Y"))
                 {
-                    normalizedCirozaData.Ascites = 0.1;
+                    normalizedCirozaData.Ascites = 0.001;
                 }
                 else if (obiect.Ascites.Contains("N"))
                 {
-                    normalizedCirozaData.Ascites = 0.9;
+                    normalizedCirozaData.Ascites = 0.999;
                 }
 
                 //hepatomegaly
                 if (obiect.Hepatomegaly.Contains("Y"))
                 {
-                    normalizedCirozaData.Hepatomegaly = 0.1;
+                    normalizedCirozaData.Hepatomegaly = 0.001;
                 }
                 else if (obiect.Hepatomegaly.Contains("N"))
                 {
-                    normalizedCirozaData.Hepatomegaly = 0.9;
+                    normalizedCirozaData.Hepatomegaly = 0.999;
                 }
 
                 //spider
                 if (obiect.Spiders.Contains("Y"))
                 {
-                    normalizedCirozaData.Spiders = 0.1;
+                    normalizedCirozaData.Spiders = 0.001;
                 }
                 else if (obiect.Spiders.Contains("N"))
                 {
-                    normalizedCirozaData.Spiders = 0.9;
+                    normalizedCirozaData.Spiders = 0.999;
                 }
 
                 //edema
                 if (obiect.Edema.Contains("Y"))
                 {
-                    normalizedCirozaData.Edema = 0.1;
+                    normalizedCirozaData.Edema = 0.001;
                 }
                 else if (obiect.Edema.Contains("N"))
                 {
-                    normalizedCirozaData.Edema = 0.9;
+                    normalizedCirozaData.Edema = 0.999;
                 }
 
                 //bilirubin
@@ -161,7 +161,7 @@ namespace Proiect3_AI
                 //stage
                 if (obiect.Stage == 1)
                 {
-                    normalizedCirozaData.Stage = 0.1;
+                    normalizedCirozaData.Stage = 0.001;
                 }
                 else if (obiect.Stage == 2)
                 {
@@ -173,7 +173,7 @@ namespace Proiect3_AI
                 }
                 else if (obiect.Stage == 4)
                 {
-                    normalizedCirozaData.Stage = 0.9;
+                    normalizedCirozaData.Stage = 0.999;
                 }
                 StorageData.normalizedCirozaList.Add(normalizedCirozaData);
                 SplitData(StorageData.normalizedCirozaList);

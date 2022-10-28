@@ -277,7 +277,7 @@ namespace Proiect3_AI
                     FeedForward(obiect);
                     calculare_eroare_pas(StorageData.outputLayer, obiect);
                     setareErori_and_weights(StorageData.neuronHLList, StorageData.outputLayer, obiect);
-
+                    
                 }
                 StorageData.errorEpoca = StorageData.errorSum / StorageData.normalizedCirozaList.Count;
                 Console.WriteLine("EroareEpoca: " + StorageData.errorEpoca);
@@ -539,7 +539,6 @@ namespace Proiect3_AI
 
         public static void calculare_eroare_pas(List<Neuron> lista_Output_Layer, NormalizedCirozaData data)
         {
-
             StorageData.errorStep = (1.0 / (2.0 * lista_Output_Layer.Count)) * Math.Pow((lista_Output_Layer[0].output - data.Stage), 2);
             StorageData.errorSum = StorageData.errorSum + StorageData.errorStep;
         }
@@ -599,7 +598,9 @@ namespace Proiect3_AI
             return numarator / numitor;
         }
 
-        
-
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
