@@ -46,6 +46,10 @@
             this.hl3Label = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.EpocaTxt = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.errorEpocaLbl = new System.Windows.Forms.Label();
+            this.EroarepasLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ratadeinvNud)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.neuHL1NUD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorNUD)).BeginInit();
@@ -258,11 +262,51 @@
             this.EpocaTxt.Size = new System.Drawing.Size(125, 27);
             this.EpocaTxt.TabIndex = 16;
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(629, 602);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(100, 20);
+            this.label6.TabIndex = 17;
+            this.label6.Text = "Eroare Epoca:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(629, 642);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(80, 20);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "Eroare Pas;";
+            // 
+            // errorEpocaLbl
+            // 
+            this.errorEpocaLbl.AutoSize = true;
+            this.errorEpocaLbl.Location = new System.Drawing.Point(735, 605);
+            this.errorEpocaLbl.Name = "errorEpocaLbl";
+            this.errorEpocaLbl.Size = new System.Drawing.Size(17, 20);
+            this.errorEpocaLbl.TabIndex = 19;
+            this.errorEpocaLbl.Text = "0";
+            // 
+            // EroarepasLbl
+            // 
+            this.EroarepasLbl.AutoSize = true;
+            this.EroarepasLbl.Location = new System.Drawing.Point(716, 644);
+            this.EroarepasLbl.Name = "EroarepasLbl";
+            this.EroarepasLbl.Size = new System.Drawing.Size(17, 20);
+            this.EroarepasLbl.TabIndex = 20;
+            this.EroarepasLbl.Text = "0";
+            // 
             // Antrenament
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1261, 705);
+            this.Controls.Add(this.EroarepasLbl);
+            this.Controls.Add(this.errorEpocaLbl);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.EpocaTxt);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.hl3Label);
@@ -312,5 +356,9 @@
         private Label hl3Label;
         private Label label5;
         private TextBox EpocaTxt;
+        private Label label6;
+        private Label label7;
+        private Label errorEpocaLbl;
+        private Label EroarepasLbl;
     }
 }

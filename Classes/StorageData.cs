@@ -30,7 +30,10 @@ namespace Proiect3_AI.Classes
         public static int nrHL, nrNeuHL1, nrNeuHL2, nrNeuHL3;
         public static double error, rata_invatare;
         public static int nrEpoci;
-        public static double errorStep, errorEpoca;
-        
+        public static double errorStep = 0;
+        public static double errorEpoca = 0;
+        public static double errorSum = 0;
+        public static double rezultatOut;
+        public static int nrStep = 0;
     }
 }
