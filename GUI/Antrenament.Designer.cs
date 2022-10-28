@@ -44,6 +44,8 @@
             this.neuHL2NUD = new System.Windows.Forms.NumericUpDown();
             this.neuHL3NUD = new System.Windows.Forms.NumericUpDown();
             this.hl3Label = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.EpocaTxt = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.ratadeinvNud)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.neuHL1NUD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorNUD)).BeginInit();
@@ -103,6 +105,7 @@
             this.btnStart.TabIndex = 3;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
             // btnStop
             // 
@@ -164,7 +167,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 602);
+            this.label4.Location = new System.Drawing.Point(12, 577);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(79, 20);
             this.label4.TabIndex = 9;
@@ -172,7 +175,7 @@
             // 
             // nrHLNUD
             // 
-            this.nrHLNUD.Location = new System.Drawing.Point(97, 600);
+            this.nrHLNUD.Location = new System.Drawing.Point(97, 575);
             this.nrHLNUD.Name = "nrHLNUD";
             this.nrHLNUD.Size = new System.Drawing.Size(62, 27);
             this.nrHLNUD.TabIndex = 10;
@@ -239,11 +242,29 @@
             this.hl3Label.Text = "Numar neuroni HL3:";
             this.hl3Label.Visible = false;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 611);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(53, 20);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "Epoca:";
+            // 
+            // EpocaTxt
+            // 
+            this.EpocaTxt.Location = new System.Drawing.Point(75, 607);
+            this.EpocaTxt.Name = "EpocaTxt";
+            this.EpocaTxt.Size = new System.Drawing.Size(125, 27);
+            this.EpocaTxt.TabIndex = 16;
+            // 
             // Antrenament
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1261, 705);
+            this.Controls.Add(this.EpocaTxt);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.hl3Label);
             this.Controls.Add(this.neuHL3NUD);
             this.Controls.Add(this.neuHL2NUD);
@@ -289,5 +310,7 @@
         private NumericUpDown neuHL2NUD;
         private NumericUpDown neuHL3NUD;
         private Label hl3Label;
+        private Label label5;
+        private TextBox EpocaTxt;
     }
 }
