@@ -8,6 +8,8 @@ namespace Proiect3_AI.Classes
 {
     public class Neuron
     {
+        public int numberOfInput;
+
         public double[] inputvalue = null;
         public double[] waitvalue = null;
 

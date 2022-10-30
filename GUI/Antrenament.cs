@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ZedGraph;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace Proiect3_AI
@@ -18,10 +20,12 @@ namespace Proiect3_AI
     public partial class Antrenament : Form
     {
         static Random random = new Random();
-        static Antrenament antrenament = new Antrenament();
         public Antrenament()
         {
             InitializeComponent();
+            backgroundWorker1.WorkerSupportsCancellation = true;
+            backgroundWorker1.WorkerReportsProgress = true;
+            zedGraphControl1.IsShowPointValues = true;
         }
 
         private void nrHLNUD_ValueChanged(object sender, EventArgs e)
@@ -57,7 +61,8 @@ namespace Proiect3_AI
             ReteaHL();
             GenerateRetea();
             InitializareWait();
-            feedForward_backPropagation();
+            feedForward_backPropagation(backgroundWorker1);
+            backgroundWorker1.RunWorkerAsync();
         }
 
         private void ReteaHL()
@@ -81,7 +86,7 @@ namespace Proiect3_AI
 
         private void GenerateRetea()
         {
-            
+
             for (int i = 0; i < 19; i++)
             {
                 Neuron neuron_IL = new Neuron();
@@ -267,29 +272,43 @@ namespace Proiect3_AI
             }
         }
 
-        public static void feedForward_backPropagation()
+        public static void feedForward_backPropagation(BackgroundWorker worker)
         {
-            int contor = 0;
             for (int i = 0; i < StorageData.nrEpoci; i++)
             {
 
-                foreach (var obiect in StorageData.normalizedCirozaList)
+                if (worker.CancellationPending)
                 {
-                    FeedForward(obiect);
-                    double error = CalculateError(StorageData.outputLayer, obiect);
-                    StorageData.epochErrorList.Add(error);
-                    setareErori_and_weights(StorageData.inputLayer, StorageData.neuronHLList, StorageData.outputLayer, obiect);
+                    StorageData.inputLayer.Clear();
+                    StorageData.hiddenLayer.Clear();
+                    StorageData.outputLayer.Clear();
+                    StorageData.neuronHLList.Clear();
+
+                    break;
                 }
+                else
+                {
 
-                double epochError = CalculateEpochError(StorageData.epochErrorList);
+                    foreach (var obiect in StorageData.antrenamentList)
+                    {
+                        FeedForward(obiect);
+                        double error = CalculateError(StorageData.outputLayer, obiect);
+                        StorageData.epochErrorList.Add(error);
+                        setareErori_and_weights(StorageData.inputLayer, StorageData.neuronHLList, StorageData.outputLayer, obiect);
+                    }
 
-                StorageData.errorEpoca = epochError;
-                Console.WriteLine("epoch " + i + "= " + StorageData.errorEpoca);
-                Console.WriteLine("\n");
+                    double epochError = CalculateEpochError(StorageData.epochErrorList);
 
+                    worker.ReportProgress(0, new PointPair(i, epochError));
+
+                    StorageData.errorEpoca = epochError;
+                    Console.WriteLine("epoch " + i + "= " + StorageData.errorEpoca);
+
+                }
             }
+                  
         }
-
+      
         public static void FeedForward(NormalizedCirozaData obiect)
         {
             StorageData.inputLayer[0].output = obiect.NumberDays;
@@ -774,7 +793,186 @@ namespace Proiect3_AI
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            
+            backgroundWorker1.CancelAsync();
+            EroarepasLbl.Text = StorageData.errorEpoca.ToString();
+        }
+
+        public static void initializare_vectori_weights_inputs()
+        {
+
+            if (StorageData.nrHL == 1)
+            {
+                double maximum = 1;
+                double minimum = -1;
+
+                foreach (var neuron in StorageData.hiddenLayer[StorageData.nrHL - 1].neuroni_HL_List)
+                {
+                    neuron.numberOfInput = StorageData.inputLayer.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+
+                foreach (var neuron in StorageData.outputLayer)
+                {
+                    neuron.numberOfInput = StorageData.hiddenLayer[StorageData.nrHL - 1].neuroni_HL_List.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+
+            }
+
+            else if (StorageData.nrHL == 2)
+            {
+                double maximum = 1;
+                double minimum = -1;
+
+                foreach (var neuron in StorageData.hiddenLayer[StorageData.nrHL - 2].neuroni_HL_List)
+                {
+
+                    neuron.numberOfInput = StorageData.inputLayer.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+
+                foreach (var neuron in StorageData.hiddenLayer[StorageData.nrHL - 1].neuroni_HL_List)
+                {
+
+                    neuron.numberOfInput = StorageData.hiddenLayer[StorageData.nrHL - 2].neuroni_HL_List.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+
+
+                foreach (var neuron in StorageData.outputLayer)
+                {
+                    neuron.numberOfInput = StorageData.hiddenLayer[StorageData.nrHL - 1].neuroni_HL_List.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+            }
+
+
+            else if (StorageData.nrHL == 3)
+            {
+                double maximum = 1;
+                double minimum = -1;
+
+                foreach (var neuron in StorageData.hiddenLayer[StorageData.nrHL - 3].neuroni_HL_List)
+                {
+
+                    neuron.numberOfInput = StorageData.inputLayer.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+
+                foreach (var neuron in StorageData.hiddenLayer[StorageData.nrHL - 2].neuroni_HL_List)
+                {
+     
+                    neuron.numberOfInput = StorageData.hiddenLayer[StorageData.nrHL - 3].neuroni_HL_List.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+
+                foreach (var neuron in StorageData.hiddenLayer[StorageData.nrHL - 1].neuroni_HL_List)
+                {
+                    neuron.numberOfInput = StorageData.hiddenLayer[StorageData.nrHL - 2].neuroni_HL_List.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+
+                foreach (var neuron in StorageData.outputLayer)
+                {
+                    neuron.numberOfInput = StorageData.hiddenLayer[StorageData.nrHL - 1].neuroni_HL_List.Count;
+                    neuron.waitvalue = new double[neuron.numberOfInput];
+                    neuron.inputvalue = new double[neuron.numberOfInput];
+
+                    for (int i = 0; i < neuron.waitvalue.Length; i++)
+                    {
+                        neuron.waitvalue[i] = Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 2);
+                    }
+                }
+
+            }
+        }
+
+        private void backgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
+        {
+            StorageData.point.Clear();
+            GenerateRetea();
+            initializare_vectori_weights_inputs();
+            zedGraphControl1.GraphPane.AddCurve("Error", StorageData.point, Color.Red);
+
+            zedGraphControl1.GraphPane.XAxis.Scale.Min = -1;
+            zedGraphControl1.GraphPane.XAxis.Scale.Max = StorageData.nrEpoci + 1;
+
+            zedGraphControl1.GraphPane.YAxis.Scale.Min = 0;
+            zedGraphControl1.GraphPane.YAxis.Scale.Max = 0.01;
+
+            feedForward_backPropagation(backgroundWorker1);
+        }
+
+        private void backgroundWorker1_ProgressChanged_1(object sender, ProgressChangedEventArgs e)
+        {
+            PointPair point = e.UserState as PointPair;
+            StorageData.point.Add(point.X, point.Y);
+            EpocaTxt.Text = point.Y.ToString();
+            zedGraphControl1.Refresh();
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted_1(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                Console.WriteLine("Canceled");
+            }
+            else if (e.Error != null)
+            {
+                Console.WriteLine("No fucking idea");
+            }
+            else
+            {
+                Console.WriteLine("DONE");
+            }
         }
     }
 }

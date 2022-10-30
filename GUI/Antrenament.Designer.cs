@@ -50,6 +50,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.errorEpocaLbl = new System.Windows.Forms.Label();
             this.EroarepasLbl = new System.Windows.Forms.Label();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.ratadeinvNud)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.neuHL1NUD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorNUD)).BeginInit();
@@ -299,6 +300,12 @@
             this.EroarepasLbl.TabIndex = 20;
             this.EroarepasLbl.Text = "0";
             // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork_1);
+            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged_1);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted_1);
+            // 
             // Antrenament
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -361,5 +368,6 @@
         private Label label7;
         private Label errorEpocaLbl;
         private Label EroarepasLbl;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

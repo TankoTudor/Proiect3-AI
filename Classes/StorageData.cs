@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZedGraph;
 
 namespace Proiect3_AI.Classes
 {
@@ -14,6 +15,7 @@ namespace Proiect3_AI.Classes
         public static List<NormalizedCirozaData> testList = new List<NormalizedCirozaData>();
         public static List<List<Neuron>> neuronHLList = new List<List<Neuron>>();        
         public static List<Neuron> inputLayer = new List<Neuron>();
+        public static List<NeuronHiddenLayerList> hiddenLayer = new List<NeuronHiddenLayerList>();
         public static List<Neuron> outputLayer = new List<Neuron>();
         public static List<double> epochErrorList = new List<double>();
         public static int min_nr_zile,max_nr_zile;
@@ -36,5 +38,6 @@ namespace Proiect3_AI.Classes
         public static double errorSum = 0;
         public static double rezultatOut;
         public static int nrStep = 0;
+        public static PointPairList point = new PointPairList();
     }
 }
