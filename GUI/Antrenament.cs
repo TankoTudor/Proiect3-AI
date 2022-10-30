@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graph;
+using Microsoft.Graph.TermStore;
 using Proiect3_AI.Classes;
 using System;
 using System.Collections.Generic;
@@ -268,21 +269,25 @@ namespace Proiect3_AI
 
         public static void feedForward_backPropagation()
         {
+            int contor = 0;
             for (int i = 0; i < StorageData.nrEpoci; i++)
             {
+
                 foreach (var obiect in StorageData.normalizedCirozaList)
                 {
-                    StorageData.errorStep = 0;
-                    StorageData.errorSum = 0;
                     FeedForward(obiect);
-                    calculare_eroare_pas(StorageData.outputLayer, obiect);
-                    setareErori_and_weights(StorageData.neuronHLList, StorageData.outputLayer, obiect);
-                    
+                    double error = CalculateError(StorageData.outputLayer, obiect);
+                    StorageData.epochErrorList.Add(error);
+                    setareErori_and_weights(StorageData.inputLayer, StorageData.neuronHLList, StorageData.outputLayer, obiect);
                 }
-                StorageData.errorEpoca = StorageData.errorSum / StorageData.normalizedCirozaList.Count;
-                Console.WriteLine("EroareEpoca: " + StorageData.errorEpoca);
-            }
 
+                double epochError = CalculateEpochError(StorageData.epochErrorList);
+
+                StorageData.errorEpoca = epochError;
+                Console.WriteLine("epoch " + i + "= " + StorageData.errorEpoca);
+                Console.WriteLine("\n");
+
+            }
         }
 
         public static void FeedForward(NormalizedCirozaData obiect)
@@ -317,7 +322,6 @@ namespace Proiect3_AI
                     CalculeazaOutput_HiddenLayer(StorageData.neuronHLList[0]);
                     j_minus = j;
                     j++;
-
                 }
                 else
                 {
@@ -328,213 +332,381 @@ namespace Proiect3_AI
                 }
 
             }
+
             TransferData(StorageData.neuronHLList[j - 1], StorageData.outputLayer);
             CalculeazaOutput_OutputLayer(StorageData.outputLayer);
-
-           StorageData.rezultatOut = StorageData.outputLayer[0].output;
+            StorageData.rezultatOut = StorageData.outputLayer[0].output;
         }
 
-        public static void setareErori_and_weights(List<List<Neuron>> neuHLList, List<Neuron> outputList, NormalizedCirozaData data)
+        public static void setareErori_and_weights(List<Neuron> inputList, List<List<Neuron>> neuHLList, List<Neuron> outputList, NormalizedCirozaData data)
         {
-            int nr_hidden_layers = StorageData.nrHL;
-
-            //calculare delta pentru output layer
             foreach (var neuron_ol in outputList)
             {
-                neuron_ol.delta = (neuron_ol.output - data.Stage) * (neuron_ol.activation * (1 - neuron_ol.activation));
-                for(int i = 0; i < StorageData.nrNeuHL1; i++)
+                double delta = (neuron_ol.output - data.Stage) * neuron_ol.activation * (1 - neuron_ol.activation);
+                neuron_ol.delta = delta;
+                for (int k = 0; k < neuron_ol.waitvalue.Length; k++)
                 {
-                    //calculeaza pentru output indiferent de nr de hidden layers
-                    neuron_ol.waitvalue[i] = neuron_ol.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layers - 1][i].output * neuron_ol.delta);
+                    double deltaWeight = StorageData.rata_invatare * neuHLList[StorageData.nrHL - 1][k].output * delta;
+                    neuron_ol.waitvalue[k] -= deltaWeight;
                 }
             }
 
-            if (nr_hidden_layers == 2)
+            if (StorageData.nrHL == 2)
             {
                 double val_suma = 0;
                 int index_neuron_hl = 0;
-                //calculare delta pentru ultimul hidden layer
-                foreach (var neuron_hl in neuHLList[nr_hidden_layers - 1])
+
+                foreach (var neuron_hl in neuHLList[StorageData.nrHL - 1])
                 {
-                    foreach (var neuron_ol in outputList)
+                    double deltaS = 0;
+
+                    for (int k = 0; k < outputList.Count; k++)
                     {
-                        val_suma = val_suma + neuron_ol.delta * neuron_ol.waitvalue[index_neuron_hl];
+                        deltaS += outputList[k].waitvalue[index_neuron_hl] * outputList[k].delta;
                     }
-                    neuron_hl.delta = val_suma * (neuron_hl.activation * (1 - neuron_hl.activation));
-                    for(int i = 0; i < StorageData.nrNeuHL1; i++)
+
+                    double delta = deltaS * neuron_hl.activation * (1 - neuron_hl.activation);
+                    neuron_hl.delta = delta;
+
+                    for (int k = 0; k < neuron_hl.waitvalue.Length; k++)
                     {
-                        neuron_hl.waitvalue[i] = neuron_hl.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layers - 2][i].output * neuron_hl.delta);
+                        double deltaWeight = StorageData.rata_invatare * neuHLList[StorageData.nrHL - 2][k].output * delta;
+                        neuron_hl.waitvalue[k] -= deltaWeight;
                     }
+
                     index_neuron_hl++;
                     val_suma = 0;
                 }
                 index_neuron_hl = 0;
 
-                foreach (var neuron_hl_stanga in neuHLList[nr_hidden_layers - 2])
+
+                foreach (var neuron_hl_stanga in neuHLList[StorageData.nrHL - 2])
                 {
-                    foreach (var neuron_hl_dreapta in neuHLList[nr_hidden_layers - 1])
+                    double deltaS = 0;
+
+                    for (int k = 0; k < neuHLList[StorageData.nrHL - 1].Count; k++)
                     {
-                        val_suma = val_suma + neuron_hl_dreapta.delta * neuron_hl_dreapta.waitvalue[index_neuron_hl];
+                        deltaS += neuHLList[StorageData.nrHL - 1][k].waitvalue[index_neuron_hl] * neuHLList[StorageData.nrHL - 1][k].delta;
                     }
-                    neuron_hl_stanga.delta = val_suma * (neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation));
-                    for(int i = 0; i < StorageData.inputLayer.Count; i++)
+
+                    double delta = deltaS * neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation);
+                    neuron_hl_stanga.delta = delta;
+
+                    for (int k = 0; k < neuron_hl_stanga.waitvalue.Length; k++)
                     {
-                        neuron_hl_stanga.waitvalue[i] = neuron_hl_stanga.waitvalue[i] + (StorageData.rata_invatare * StorageData.inputLayer[i].output * neuron_hl_stanga.delta);
+                        double deltaWeight = StorageData.rata_invatare * inputList[k].output * delta;
+                        neuron_hl_stanga.waitvalue[k] -= deltaWeight;
                     }
+
                     index_neuron_hl++;
                     val_suma = 0;
                 }
                 index_neuron_hl = 0;
             }
-            else if (nr_hidden_layers == 3)
+
+            if (StorageData.nrHL == 3)
             {
                 double val_suma = 0;
                 int index_neuron_hl = 0;
-                //calculare delta pentru ultimul hidden layer
-                foreach (var neuron_hl in neuHLList[nr_hidden_layers - 1])
+
+                foreach (var neuron_hl in neuHLList[StorageData.nrHL - 1])
                 {
-                    foreach (var neuron_ol in outputList)
+                    double deltaS = 0;
+
+                    for (int k = 0; k < outputList.Count; k++)
                     {
-                        val_suma = val_suma + neuron_ol.delta * neuron_ol.waitvalue[index_neuron_hl];
+                        deltaS += outputList[k].waitvalue[index_neuron_hl] * outputList[k].delta;
                     }
-                    neuron_hl.delta = val_suma * (neuron_hl.activation * (1 - neuron_hl.activation));
-                    for(int i = 0; i < StorageData.nrNeuHL2; i++)
+
+                    double delta = deltaS * neuron_hl.activation * (1 - neuron_hl.activation);
+                    neuron_hl.delta = delta;
+
+                    for (int k = 0; k < neuron_hl.waitvalue.Length; k++)
                     {
-                        neuron_hl.waitvalue[i] = neuron_hl.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layers - 2][i].output * neuron_hl.delta);
+                        double deltaWeight = StorageData.rata_invatare * neuHLList[StorageData.nrHL - 2][k].output * delta;
+                        neuron_hl.waitvalue[k] -= deltaWeight;
                     }
+
                     index_neuron_hl++;
                     val_suma = 0;
-                    
                 }
                 index_neuron_hl = 0;
-                foreach (var neuron_hl_stanga in neuHLList[nr_hidden_layers - 2])
+
+                foreach (var neuron_hl_stanga in neuHLList[StorageData.nrHL - 2])
                 {
-                    foreach (var neuron_hl_dreapta in neuHLList[nr_hidden_layers - 1])
+                    double deltaS = 0;
+
+                    for (int k = 0; k < neuHLList[StorageData.nrHL - 1].Count; k++)
                     {
-                        val_suma = val_suma + neuron_hl_dreapta.delta * neuron_hl_dreapta.waitvalue[index_neuron_hl];
+                        deltaS += neuHLList[StorageData.nrHL - 1][k].waitvalue[index_neuron_hl] * neuHLList[StorageData.nrHL - 1][k].delta;
                     }
-                    neuron_hl_stanga.delta = val_suma * (neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation));
-                    for (int i = 0; i < StorageData.nrNeuHL1; i++)
+
+                    double delta = deltaS * neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation);
+                    neuron_hl_stanga.delta = delta;
+
+                    for (int k = 0; k < neuron_hl_stanga.waitvalue.Length; k++)
                     {
-                        neuron_hl_stanga.waitvalue[i] = neuron_hl_stanga.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layers - 3][i].output * neuron_hl_stanga.delta);
+                        double deltaWeight = StorageData.rata_invatare * neuHLList[StorageData.nrHL - 3][k].output * delta;
+                        neuron_hl_stanga.waitvalue[k] -= deltaWeight;
                     }
+
                     index_neuron_hl++;
                     val_suma = 0;
-                    
                 }
                 index_neuron_hl = 0;
-                foreach (var neuron_hl_stanga in neuHLList[nr_hidden_layers - 3])
+
+                foreach (var neuron_hl_stanga in neuHLList[StorageData.nrHL - 3])
                 {
-                    foreach (var neuron_hl_dreapta in neuHLList[nr_hidden_layers - 2])
+                    double deltaS = 0;
+
+                    for (int k = 0; k < neuHLList[StorageData.nrHL - 2].Count; k++)
                     {
-                        val_suma = val_suma + neuron_hl_dreapta.delta * neuron_hl_dreapta.waitvalue[index_neuron_hl];
+                        deltaS += neuHLList[StorageData.nrHL - 2][k].waitvalue[index_neuron_hl] * neuHLList[StorageData.nrHL - 2][k].delta;
                     }
-                    neuron_hl_stanga.delta = val_suma * (neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation));
-                    for (int i = 0; i < StorageData.inputLayer.Count; i++)
+
+                    double delta = deltaS * neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation);
+                    neuron_hl_stanga.delta = delta;
+
+                    for (int k = 0; k < neuron_hl_stanga.waitvalue.Length; k++)
                     {
-                        neuron_hl_stanga.waitvalue[i] = neuron_hl_stanga.waitvalue[i] + (StorageData.rata_invatare * StorageData.inputLayer[i].output * neuron_hl_stanga.delta);
+                        double deltaWeight = StorageData.rata_invatare * inputList[k].output * delta;
+                        neuron_hl_stanga.waitvalue[k] -= deltaWeight;
                     }
+
                     index_neuron_hl++;
-                    val_suma = 0; 
+                    val_suma = 0;
                 }
                 index_neuron_hl = 0;
             }
         }
 
-        public static void schimbare_weights(List<Neuron> lista_input_layer, List<List<Neuron>> lista_de_liste_Hidden_Layere, List<Neuron> lista_Output_Layer, NormalizedCirozaData data)
+        public static void schimbare_weights(List<Neuron> inputList, List<List<Neuron>> neuHLList, List<Neuron> outputList, NormalizedCirozaData data)
         {
+
             if (StorageData.nrHL == 1)
             {
                 int nr_hidden_layere = StorageData.nrHL;
-                foreach (var neuron in lista_Output_Layer)
+                foreach (var neuron in outputList)
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_de_liste_Hidden_Layere[nr_hidden_layere - 1][i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layere - 1][i].output * neuron.delta);
                     }
                 }
 
-                foreach (var neuron in lista_de_liste_Hidden_Layere[nr_hidden_layere - 1])
+                foreach (var neuron in neuHLList[nr_hidden_layere - 1])
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_input_layer[i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * inputList[i].output * neuron.delta);
                     }
                 }
             }
             else if (StorageData.nrHL == 2)
             {
                 int nr_hidden_layere = StorageData.nrHL;
-                foreach (var neuron in lista_Output_Layer)
+                foreach (var neuron in outputList)
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_de_liste_Hidden_Layere[nr_hidden_layere - 1][i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layere - 1][i].output * neuron.delta);
                     }
                 }
 
-                foreach (var neuron in lista_de_liste_Hidden_Layere[nr_hidden_layere - 1])
+                foreach (var neuron in neuHLList[nr_hidden_layere - 1])
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_de_liste_Hidden_Layere[nr_hidden_layere - 2][i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layere - 2][i].output * neuron.delta);
                     }
                 }
 
 
-                foreach (var neuron in lista_de_liste_Hidden_Layere[nr_hidden_layere - 2])
+                foreach (var neuron in neuHLList[nr_hidden_layere - 2])
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_input_layer[i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * inputList[i].output * neuron.delta);
                     }
                 }
             }
             else if (StorageData.nrHL == 3)
             {
                 int nr_hidden_layere = StorageData.nrHL;
-                foreach (var neuron in lista_Output_Layer)
+                foreach (var neuron in outputList)
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_de_liste_Hidden_Layere[nr_hidden_layere - 1][i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layere - 1][i].output * neuron.delta);
                     }
                 }
 
-                foreach (var neuron in lista_de_liste_Hidden_Layere[nr_hidden_layere - 1])
+                foreach (var neuron in neuHLList[nr_hidden_layere - 1])
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_de_liste_Hidden_Layere[nr_hidden_layere - 2][i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layere - 2][i].output * neuron.delta);
                     }
                 }
 
-                foreach (var neuron in lista_de_liste_Hidden_Layere[nr_hidden_layere - 2])
+                foreach (var neuron in neuHLList[nr_hidden_layere - 2])
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_de_liste_Hidden_Layere[nr_hidden_layere - 3][i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * neuHLList[nr_hidden_layere - 3][i].output * neuron.delta);
                     }
                 }
 
 
-                foreach (var neuron in lista_de_liste_Hidden_Layere[nr_hidden_layere - 3])
+                foreach (var neuron in neuHLList[nr_hidden_layere - 3])
                 {
                     int nr_weighturi = neuron.waitvalue.Length;
                     for (int i = 0; i < nr_weighturi; i++)
                     {
-                        neuron.waitvalue[i] = neuron.waitvalue[i] - (StorageData.rata_invatare * lista_input_layer[i].output * neuron.delta);
+                        neuron.waitvalue[i] = neuron.waitvalue[i] + (StorageData.rata_invatare * inputList[i].output * neuron.delta);
                     }
                 }
             }
+
+        }
+
+        public static void setareErori(List<List<Neuron>> lista_de_liste_Hidden_Layere, List<Neuron> lista_Output_Layer, NormalizedCirozaData data)
+        {
+            int nr_hidden_layers = StorageData.nrHL;
+
+            foreach (var neuron_ol in lista_Output_Layer)
+            {
+                neuron_ol.delta = (neuron_ol.output - data.Stage) * (neuron_ol.activation * (1 - neuron_ol.activation));
+            }
+
+            if (nr_hidden_layers == 1)
+            {
+                double val_suma = 0;
+                int index_neuron_hl = 0;
+
+                foreach (var neuron_hl in lista_de_liste_Hidden_Layere[nr_hidden_layers - 1])
+                {
+                    foreach (var neuron_ol in lista_Output_Layer)
+                    {
+                        val_suma = val_suma + neuron_ol.delta * neuron_ol.waitvalue[index_neuron_hl];
+                    }
+                    neuron_hl.delta = val_suma * (neuron_hl.activation * (1 - neuron_hl.activation));
+                    index_neuron_hl++;
+                    val_suma = 0;
+                    index_neuron_hl = 0;
+                }
+            }
+            else if (nr_hidden_layers == 2)
+            {
+                double val_suma = 0;
+                int index_neuron_hl = 0;
+
+                foreach (var neuron_hl in lista_de_liste_Hidden_Layere[nr_hidden_layers - 1])
+                {
+                    foreach (var neuron_ol in lista_Output_Layer)
+                    {
+                        val_suma = val_suma + neuron_ol.delta * neuron_ol.waitvalue[index_neuron_hl];
+                    }
+                    neuron_hl.delta = val_suma * (neuron_hl.activation * (1 - neuron_hl.activation));
+                    index_neuron_hl++;
+                    val_suma = 0;
+                    index_neuron_hl = 0;
+                }
+
+                foreach (var neuron_hl_stanga in lista_de_liste_Hidden_Layere[nr_hidden_layers - 2])
+                {
+                    foreach (var neuron_hl_dreapta in lista_de_liste_Hidden_Layere[nr_hidden_layers - 1])
+                    {
+                        val_suma = val_suma + neuron_hl_dreapta.delta * neuron_hl_dreapta.waitvalue[index_neuron_hl];
+                    }
+                    neuron_hl_stanga.delta = val_suma * (neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation));
+                    index_neuron_hl++;
+                    val_suma = 0;
+                    index_neuron_hl = 0;
+                }
+
+            }
+            else if (nr_hidden_layers == 3)
+            {
+                double val_suma = 0;
+                int index_neuron_hl = 0;
+
+                foreach (var neuron_hl in lista_de_liste_Hidden_Layere[nr_hidden_layers - 1])
+                {
+                    foreach (var neuron_ol in lista_Output_Layer)
+                    {
+                        val_suma = val_suma + neuron_ol.delta * neuron_ol.waitvalue[index_neuron_hl];
+                    }
+                    neuron_hl.delta = val_suma * (neuron_hl.activation * (1 - neuron_hl.activation));
+                    index_neuron_hl++;
+                    val_suma = 0;
+                    index_neuron_hl = 0;
+                }
+
+                foreach (var neuron_hl_stanga in lista_de_liste_Hidden_Layere[nr_hidden_layers - 2])
+                {
+                    foreach (var neuron_hl_dreapta in lista_de_liste_Hidden_Layere[nr_hidden_layers - 1])
+                    {
+                        val_suma = val_suma + neuron_hl_dreapta.delta * neuron_hl_dreapta.waitvalue[index_neuron_hl];
+                    }
+                    neuron_hl_stanga.delta = val_suma * (neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation));
+                    index_neuron_hl++;
+                    val_suma = 0;
+                    index_neuron_hl = 0;
+                }
+
+                foreach (var neuron_hl_stanga in lista_de_liste_Hidden_Layere[nr_hidden_layers - 3])
+                {
+                    foreach (var neuron_hl_dreapta in lista_de_liste_Hidden_Layere[nr_hidden_layers - 2])
+                    {
+                        val_suma = val_suma + neuron_hl_dreapta.delta * neuron_hl_dreapta.waitvalue[index_neuron_hl];
+                    }
+                    neuron_hl_stanga.delta = val_suma * (neuron_hl_stanga.activation * (1 - neuron_hl_stanga.activation));
+                    index_neuron_hl++;
+                    val_suma = 0;
+                    index_neuron_hl = 0;
+                }
+            }
+        }
+
+        private static double CalculateEpochError(List<double> errorEpch)
+        {
+            double error = 0;
+            foreach (double value in errorEpch)
+            {
+                error += value;
+            }
+            error /= errorEpch.Count;
+            return error;
+        }
+
+        private static double CalculateError(List<Neuron> ol_list, NormalizedCirozaData obiect)
+        {
+            double sum = 0;
+            for (int i = 0; i < 1; i++)
+            {
+                sum += Math.Pow((getTargetOutput(ol_list, obiect) - getOutput(ol_list, obiect)), 2);
+            }
+            sum = sum / (2 * 1);
+            return sum;
+        }
+
+        public static double getOutput(List<Neuron> ol_list, NormalizedCirozaData obiect)
+        {
+            return StorageData.outputLayer[0].output;
+        }
+
+        public static double getTargetOutput(List<Neuron> ol_list, NormalizedCirozaData obiect)
+        {
+            return obiect.Stage;
         }
 
         public static void calculare_eroare_pas(List<Neuron> lista_Output_Layer, NormalizedCirozaData data)
@@ -593,9 +765,11 @@ namespace Proiect3_AI
 
         public static double CalculTanh(Neuron neuron)
         {
-            double numarator = Math.Pow(Math.E, 1 * (neuron.input - 0)) - Math.Pow(Math.E, -1 * 1 * (neuron.input - 0));
-            double numitor = Math.Pow(Math.E, 1 * (neuron.input - 0)) + Math.Pow(Math.E, -1 * 1 * (neuron.input - 0));
-            return numarator / numitor;
+            double numarator = 1f;
+            double numitor = 1 + Math.Exp(-1 * neuron.input);
+            double act = numarator / numitor;
+
+            return act;
         }
 
         private void btnStop_Click(object sender, EventArgs e)

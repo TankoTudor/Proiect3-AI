@@ -12,9 +12,10 @@ namespace Proiect3_AI.Classes
         public static List<NormalizedCirozaData> normalizedCirozaList = new List<NormalizedCirozaData>();
         public static List<NormalizedCirozaData> antrenamentList = new List<NormalizedCirozaData>();
         public static List<NormalizedCirozaData> testList = new List<NormalizedCirozaData>();
-        public static List<List<Neuron>> neuronHLList = new List<List<Neuron>>();
+        public static List<List<Neuron>> neuronHLList = new List<List<Neuron>>();        
         public static List<Neuron> inputLayer = new List<Neuron>();
         public static List<Neuron> outputLayer = new List<Neuron>();
+        public static List<double> epochErrorList = new List<double>();
         public static int min_nr_zile,max_nr_zile;
         public static int min_ani,max_ani;
         public static double min_bilirubin,max_bilirubin;
